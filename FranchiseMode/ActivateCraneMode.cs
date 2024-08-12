@@ -6,7 +6,7 @@ using Unity.Entities;
 
 namespace KitchenSuperCrane.FranchiseMode
 {
-    public class ActivateCraneMode : FranchiseSystem, IModSystem
+    public class ActivateCraneMode : GameSystemBase, IModSystem
     {
         EntityQuery CraneActivators;
         EntityQuery PlayersWithoutCraneMode;
@@ -22,6 +22,9 @@ namespace KitchenSuperCrane.FranchiseMode
 
         protected override void OnUpdate()
         {
+            if (Has<SKitchenMarker>())
+                return;
+
             EntityManager.AddComponent<CActivatingCraneMode>(PlayersWithoutCraneMode);
 
             using NativeArray<Entity> entities = CraneActivators.ToEntityArray(Allocator.Temp);

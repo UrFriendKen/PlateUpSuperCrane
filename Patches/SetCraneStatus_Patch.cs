@@ -22,7 +22,7 @@ namespace KitchenSuperCrane.Patches
 
         static readonly List<OpCode> OPCODES_TO_MATCH = new List<OpCode>()
         {
-            OpCodes.Ldloca,
+            OpCodes.Ldloca, // Load Kitchen.SetCraneStatus/'<>c__DisplayClass1_0'
             OpCodes.Ldarg,
             OpCodes.Call,
             OpCodes.Brtrue,

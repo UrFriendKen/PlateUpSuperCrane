@@ -1,10 +1,11 @@
 ﻿using Kitchen;
+using KitchenMods;
 using Unity.Entities;
 
 namespace KitchenSuperCrane.Common
 {
     [UpdateBefore(typeof(ShowPingedApplianceInfo))]
-    internal class ApplianceInteractRotatePush : ApplianceInteractionSystem
+    internal class ApplianceInteractRotatePush : ApplianceInteractionSystem, IModSystem
     {
         private CConveyPushRotatable Rotatable;
         protected override InteractionType RequiredType => InteractionType.Notify;
@@ -13,12 +14,12 @@ namespace KitchenSuperCrane.Common
 
         protected override bool IsPossible(ref InteractionData data)
         {
-            if (!Require(data.Target, out Rotatable))
+            if (!Has<CIsCraneMode>(data.Interactor))
             {
                 return false;
             }
-
-            if (Rotatable.Target == Orientation.Null)
+            if (!data.Context.Require(data.Target, out Rotatable) ||
+                Rotatable.Target == Orientation.Null)
             {
                 return false;
             }
@@ -32,7 +33,7 @@ namespace KitchenSuperCrane.Common
             {
                 Rotatable.Target = Orientation.Left;
             }
-            Set(data.Target, Rotatable);
+            data.Context.Set(data.Target, Rotatable);
         }
     }
 }
