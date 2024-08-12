@@ -21,9 +21,8 @@ namespace KitchenSuperCrane.Common
 
         protected override bool IsPossible(ref InteractionData data)
         {
-            data.Context.Require(data.Interactor, out Holder);
-
-            if (!data.Context.Require(data.Interactor, out Holder) ||
+            if (!data.Context.Has<CIsCraneMode>(data.Interactor) ||
+                !data.Context.Require(data.Interactor, out Holder) ||
                 !data.Context.Require((Entity)Holder, out Blueprint) ||
                 !Blueprint.IsCopy ||
                 !data.Context.Require((Entity)Holder, out Sale))

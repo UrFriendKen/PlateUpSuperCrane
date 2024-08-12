@@ -15,9 +15,7 @@ namespace KitchenSuperCrane.Common
         protected override bool IsPossible(ref InteractionData data)
         {
             if (!Has<CIsCraneMode>(data.Interactor))
-            {
                 return false;
-            }
             if (!data.Context.Require(data.Target, out Rotatable) ||
                 Rotatable.Target == Orientation.Null)
             {
