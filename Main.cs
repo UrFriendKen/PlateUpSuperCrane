@@ -1,6 +1,8 @@
 ﻿using HarmonyLib;
+using Kitchen;
 using KitchenMods;
 using PreferenceSystem;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -12,7 +14,7 @@ namespace KitchenSuperCrane
     {
         public const string MOD_GUID = $"IcedMilo.PlateUp.{MOD_NAME}";
         public const string MOD_NAME = "Super Crane";
-        public const string MOD_VERSION = "0.1.2";
+        public const string MOD_VERSION = "0.1.3";
 
         internal const string ALLOW_CRANE_DURING_PREP_ID = "allowCraneDuringPrep";
         internal const string ALLOW_CRANE_DURING_PRACTICE_ID = "allowCraneDuringPractice";
@@ -21,6 +23,9 @@ namespace KitchenSuperCrane
         internal const string ALLOW_CRANE_IN_FRANCHISE_BUILDER_ID = "allowCraneInFranchiseBuilder";
 
         internal const string MOVEMENT_CRANE_SPEED_FACTOR_ID = "movementCraneSpeedFactor";
+
+        internal const string PREFERRED_CRANE_OWNER_ID = "preferredCraneOwner";
+
         internal static readonly float[] AllowedCraneSpeedFactors = new float[] {
             0.2f, 0.4f, 0.6f, 0.8f, 1f,
             1.2f, 1.4f, 1.6f, 1.8f, 2f,
@@ -41,6 +46,14 @@ namespace KitchenSuperCrane
             LogWarning($"{MOD_GUID} v{MOD_VERSION} in use!");
 
             PrefManager = new PreferenceSystemManager(MOD_GUID, MOD_NAME);
+        }
+
+        public void PreInject()
+        {
+            ProfileStore.Main.Load();
+            List<string> realProfileNames = ProfileStore.Main.AllProfiles().Where(x => x.IsRealProfile).Select(x => x.Name).ToList();
+            string[] preferredCraneOwnerValues = [string.Empty, .. realProfileNames];
+            string[] preferredCraneOwnerStrings = ["None", .. realProfileNames];
 
             PrefManager
                 .AddLabel("Super Crane")
@@ -84,14 +97,19 @@ namespace KitchenSuperCrane
                     .AddSpacer()
                     .AddSpacer()
                 .SubmenuDone()
+                .AddSubmenu("Crane Owner", "CraneOwner")
+                    .AddLabel("Preferred Crane Profile")
+                    .AddOption<string>(PREFERRED_CRANE_OWNER_ID,
+                        string.Empty,
+                        preferredCraneOwnerValues,
+                        preferredCraneOwnerStrings)
+                    .AddSpacer()
+                    .AddSpacer()
+                .SubmenuDone()
                 .AddSpacer()
                 .AddSpacer();
 
             PrefManager.RegisterMenu(PreferenceSystemManager.MenuType.PauseMenu);
-        }
-
-        public void PreInject()
-        {
         }
 
         public void PostInject()
