@@ -37,7 +37,7 @@ namespace KitchenSuperCrane.Common
 
             Dictionary<int, PlayerData> players = (Dictionary<int, PlayerData>)f_Players?.GetValue(InputSourceIdentifier.DefaultInputSource);
 
-            if (!players.TryGetValue(preferredPlayerID, out PlayerData playerData))
+            if (players == default || !players.TryGetValue(preferredPlayerID, out PlayerData playerData))
                 return;
 
             bool isChanged = false;

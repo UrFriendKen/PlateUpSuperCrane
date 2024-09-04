@@ -14,7 +14,7 @@ namespace KitchenSuperCrane
     {
         public const string MOD_GUID = $"IcedMilo.PlateUp.{MOD_NAME}";
         public const string MOD_NAME = "Super Crane";
-        public const string MOD_VERSION = "0.1.3";
+        public const string MOD_VERSION = "0.1.4";
 
         internal const string ALLOW_CRANE_DURING_PREP_ID = "allowCraneDuringPrep";
         internal const string ALLOW_CRANE_DURING_PRACTICE_ID = "allowCraneDuringPractice";
@@ -44,12 +44,14 @@ namespace KitchenSuperCrane
         public void PostActivate(KitchenMods.Mod mod)
         {
             LogWarning($"{MOD_GUID} v{MOD_VERSION} in use!");
-
-            PrefManager = new PreferenceSystemManager(MOD_GUID, MOD_NAME);
         }
 
         public void PreInject()
         {
+            if (PrefManager != null)
+                return;
+
+            PrefManager = new PreferenceSystemManager(MOD_GUID, MOD_NAME);
             ProfileStore.Main.Load();
             List<string> realProfileNames = ProfileStore.Main.AllProfiles().Where(x => x.IsRealProfile).Select(x => x.Name).ToList();
             string[] preferredCraneOwnerValues = [string.Empty, .. realProfileNames];
