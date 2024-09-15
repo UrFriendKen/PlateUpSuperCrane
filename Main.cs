@@ -1,5 +1,7 @@
-﻿using HarmonyLib;
+﻿using Controllers;
+using HarmonyLib;
 using Kitchen;
+using KitchenData;
 using KitchenMods;
 using PreferenceSystem;
 using System.Collections.Generic;
@@ -112,6 +114,44 @@ namespace KitchenSuperCrane
                 .AddSpacer();
 
             PrefManager.RegisterMenu(PreferenceSystemManager.MenuType.PauseMenu);
+
+
+            Main.LogInfo("Populating mouse path maps for controllers...");
+            foreach (KeyValuePair<ControllerType, List<ControllerPathMap>> kvp in GameData.Main.GlobalLocalisation.ControllerIcons.PathMapsByController)
+            {
+                if (!kvp.Value.Where(x => x.Control == "leftButton").Any())
+                {
+                    kvp.Value.Add(new ControllerPathMap()
+                    {
+                        Control = "leftButton",
+                        Name = "LMB",
+                        Button = "LeftClick"
+                    });
+                    Main.LogInfo($"Added left button path for {kvp.Key}");
+                }
+
+                if (!kvp.Value.Where(x => x.Control == "rightButton").Any())
+                {
+                    kvp.Value.Add(new ControllerPathMap()
+                    {
+                        Control = "rightButton",
+                        Name = "RMB",
+                        Button = "RightClick"
+                    });
+                    Main.LogInfo($"Added right button path for {kvp.Key}");
+                }
+
+                if (!kvp.Value.Where(x => x.Control == "middleButton").Any())
+                {
+                    kvp.Value.Add(new ControllerPathMap()
+                    {
+                        Control = "middleButton",
+                        Name = "MMB",
+                        Button = "MiddleClick"
+                    });
+                    Main.LogInfo($"Added middle button path for {kvp.Key}");
+                }
+            }
         }
 
         public void PostInject()

@@ -1,57 +1,59 @@
-﻿using HarmonyLib;
-using Kitchen;
-using KitchenSuperCrane.Helpers;
+﻿using Controllers;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
-
 namespace KitchenSuperCrane.Patches
 {
     [HarmonyPatch]
-    static class PlayerCraneMovementComponent_Patch2
+    static class Maps_Patch2
     {
-        static readonly Type TARGET_TYPE = typeof(PlayerCraneMovementComponent);
-        const bool IS_ORIGINAL_LAMBDA_BODY = false;
-        const int LAMBDA_BODY_INDEX = 0;
-        const string TARGET_METHOD_NAME = "IsIssuingMouseTarget";
-        const string DESCRIPTION = "Remove keyboard user check. Replace with prefix."; // Logging purpose of patch
+        static readonly Type TARGET_TYPE = typeof(Maps);
+        const string DESCRIPTION = "Allow mouse bindings for non-keyboards."; // Logging purpose of patch
 
         const int EXPECTED_MATCH_COUNT = 1;
 
         static readonly List<OpCode> OPCODES_TO_MATCH = new List<OpCode>()
         {
-            OpCodes.Ldsfld,
-            OpCodes.Ldarg_1,
+            //IL_0088: ldloc.s 4
+            //IL_008a: ldarg.0
+            //IL_008b: ldfld class [Unity.InputSystem]
+            //IL_0090: callvirt instance string[Unity.InputSystem] UnityEngine.InputSystem.InputControl::get_path()
+            //IL_0095: ldstr "/Keyboard"
+            //IL_009a: call bool[mscorlib] System.String::op_Equality(string, string)
+            //IL_009f: brfalse.s IL_00bb
+
+            OpCodes.Ldloc_S,
+            OpCodes.Ldarg_0,
+            OpCodes.Ldfld,
             OpCodes.Callvirt,
-            OpCodes.Ldc_I4_1,
-            OpCodes.And,
-            OpCodes.Ldc_I4_0,
-            OpCodes.Cgt_Un,
-            OpCodes.Brtrue,
-            OpCodes.Ldc_I4_0,
-            OpCodes.Ret
+            OpCodes.Ldstr,
+            OpCodes.Call,
+            OpCodes.Brfalse
         };
 
         // null is ignore
         static readonly List<object> OPERANDS_TO_MATCH = new List<object>()
         {
+            null,
+            null,
+            null,
+            null,
+            "/Keyboard"
         };
 
         static readonly List<OpCode> MODIFIED_OPCODES = new List<OpCode>()
         {
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop,
-            OpCodes.Nop
+            OpCodes.Ldloc_S,
+            OpCodes.Ldarg_0,
+            OpCodes.Ldfld,
+            OpCodes.Callvirt,
+            OpCodes.Ldstr,
+            OpCodes.Call,
+            OpCodes.Pop
         };
 
         // null is ignore
@@ -61,21 +63,12 @@ namespace KitchenSuperCrane.Patches
 
         public static MethodBase TargetMethod()
         {
-            Type type = IS_ORIGINAL_LAMBDA_BODY ? AccessTools.FirstInner(TARGET_TYPE, t => t.Name.Contains($"c__DisplayClass_OnUpdate_LambdaJob{LAMBDA_BODY_INDEX}")) : TARGET_TYPE;
-            return AccessTools.FirstMethod(type, method => method.Name.Contains(IS_ORIGINAL_LAMBDA_BODY ? "OriginalLambdaBody" : TARGET_METHOD_NAME));
-        }
-
-        [HarmonyPrefix]
-        static bool IsIssuingMouseTarget_Prefix(int player_id, ref bool __result)
-        {
-            if (MouseUtils.IsMouseUser(player_id))
-                return true;
-            __result = false;
-            return false;
+            Type type = AccessTools.FirstInner(TARGET_TYPE, t => t.Name.Contains($"<>c__DisplayClass4_0"));
+            return AccessTools.FirstMethod(type, method => method.Name.Contains("<PerformRebinding>b__1"));
         }
 
         [HarmonyTranspiler]
-        static IEnumerable<CodeInstruction> OriginalLambdaBody_Transpiler(IEnumerable<CodeInstruction> instructions)
+        static IEnumerable<CodeInstruction> PerformRebinding_Transpiler(IEnumerable<CodeInstruction> instructions)
         {
             Main.LogInfo($"{TARGET_TYPE.Name} Transpiler");
             if (!(DESCRIPTION == null || DESCRIPTION == string.Empty))
