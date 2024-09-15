@@ -16,7 +16,7 @@ namespace KitchenSuperCrane
     {
         public const string MOD_GUID = $"IcedMilo.PlateUp.{MOD_NAME}";
         public const string MOD_NAME = "Super Crane";
-        public const string MOD_VERSION = "0.1.4";
+        public const string MOD_VERSION = "0.1.5";
 
         internal const string ALLOW_CRANE_DURING_PREP_ID = "allowCraneDuringPrep";
         internal const string ALLOW_CRANE_DURING_PRACTICE_ID = "allowCraneDuringPractice";
