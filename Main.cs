@@ -1,5 +1,4 @@
-﻿using Controllers;
-using HarmonyLib;
+﻿using HarmonyLib;
 using Kitchen;
 using KitchenData;
 using KitchenMods;
@@ -8,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
+using Platforms;
 
 // Namespace should have "Kitchen" in the beginning
 namespace KitchenSuperCrane
@@ -16,7 +16,7 @@ namespace KitchenSuperCrane
     {
         public const string MOD_GUID = $"IcedMilo.PlateUp.{MOD_NAME}";
         public const string MOD_NAME = "Super Crane";
-        public const string MOD_VERSION = "0.1.5";
+        public const string MOD_VERSION = "0.1.6";
 
         internal const string ALLOW_CRANE_DURING_PREP_ID = "allowCraneDuringPrep";
         internal const string ALLOW_CRANE_DURING_PRACTICE_ID = "allowCraneDuringPractice";

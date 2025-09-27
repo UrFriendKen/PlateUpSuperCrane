@@ -10,7 +10,7 @@ using UnityEngine.InputSystem.Users;
 
 namespace KitchenSuperCrane.Common
 {
-    [FilterModes(AllowedModes = GameConnectionMode.All)]
+    [FilterModes(AllowedModes = GameSetupMode.All)]
     public class MouseAssignmentHandler : GenericSystemBase, IModSystem
     {
         FieldInfo f_Players;

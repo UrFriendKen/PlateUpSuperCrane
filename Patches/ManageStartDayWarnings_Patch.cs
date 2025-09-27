@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Unity.Entities;
+using UnityEngine;
 
 namespace KitchenSuperCrane.Patches
 {
